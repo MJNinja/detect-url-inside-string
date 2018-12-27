@@ -5,34 +5,35 @@
 #######################################################################
 
 //The text to look for the link
-$text = "The text you want to filter goes here. www.google.com";
+$text = "The text you want to filter goes here. www.google.com and www.facebook.com";
 
-//CALL THE FUNCTION
-turnUrlIntoHyperlink($text);
+//Call the function
+echo turnUrlIntoHyperlink($text);
 
-function turnUrlIntoHyperlink($text){
+function turnUrlIntoHyperlink($string){
 
-    // The Regular Expression filter
-    $reg_exUrl = "/(?i)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))/";
+	//The Regular Expression filter
+	$reg_exUrl = "/(?i)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))/";
 
-    // Check if there is a url in the text
-    if(preg_match($reg_exUrl, $text, $url)) {
+	// Check if there is a url in the text
+	if(preg_match_all($reg_exUrl, $string, $url)) {
 
-        if(strpos( $url[0], ":" ) === false){
-            $link = 'http://'.$url[0];
-        }else{
-            $link = $url[0];
+        // Loop through all matches
+        foreach($url[0] as $newLinks){
+            if(strstr( $newLinks, ":" ) === false){
+				$link = 'http://'.$newLinks;
+			}else{
+				$link = $newLinks;
+			}
+
+            // Create Search and Replace strings
+            $search  = $newLinks;
+            $replace = '<a href="'.$link.'" title="'.$newLinks.'" target="_blank">'.$link.'</a>';
+            $string = str_replace($search, $replace, $string);
         }
+	}
 
-        // make the urls hyper links
-        echo preg_replace($reg_exUrl, '<a href="'.$link.'" title="'.$url[0].'">'.$url[0].'</a>', $text);
-
-    }else {
-
-        // if no urls in the text just return the text
-        echo $text;
-
-    }
-
+    //Return result
+	return $string;
 }
 ?>
